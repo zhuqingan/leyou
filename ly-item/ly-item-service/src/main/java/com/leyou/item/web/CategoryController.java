@@ -22,4 +22,14 @@ public class CategoryController {
     public ResponseEntity<List<Category>> queryCategoryListByPid(@RequestParam("pid") Long pid) {
         return ResponseEntity.ok(categoryService.queryCategoryListByPid(pid));
     }
+
+    /**
+     * 根据ids查询商品分类
+     * @param ids
+     * @return
+     */
+    @GetMapping("list/ids")
+    public ResponseEntity<List<Category>> queryCateGoryByIds(@RequestParam("ids")List<Long> ids){
+        return ResponseEntity.ok(categoryService.queryByIds(ids));
+    }
 }
