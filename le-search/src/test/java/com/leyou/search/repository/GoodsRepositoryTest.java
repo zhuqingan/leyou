@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -40,6 +40,7 @@ public class GoodsRepositoryTest {
 
     @Test
     public void loadData(){
+        List<Spu> list = new ArrayList<>();
         int page = 1;
         int rows = 100;
         int size = 0;
@@ -47,17 +48,23 @@ public class GoodsRepositoryTest {
             // 查询spu信息
             PageResult<Spu> result = goodsClient.querySpuByPage(page, rows, true, null);
             List<Spu> spuList = result.getItems();
-            if (CollectionUtils.isEmpty(spuList)) {
-                break;
-            }
-            // 构建成goods
-            List<Goods> goodsList = spuList.stream().map(searchService::buildGoods).collect(Collectors.toList());
-            //存入索引库
-            goodsRepository.saveAll(goodsList);
-
-            // 翻页
-            page++;
             size = spuList.size();
+            page ++;
+            list.addAll(spuList);
         }while (size == 100);
+
+        //创建Goods集合
+        List<Goods> goodsList = new ArrayList<>();
+        //遍历spu
+        for (Spu spu : list) {
+            try {
+                System.out.println("spu id" + spu.getId());
+                Goods goods = this.searchService.buildGoods(spu);
+                goodsList.add(goods);
+            } catch (IOException e) {
+                System.out.println("查询失败：" + spu.getId());
+            }
+        }
+        this.goodsRepository.saveAll(goodsList);
     }
 }

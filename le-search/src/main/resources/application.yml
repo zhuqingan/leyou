@@ -6,7 +6,7 @@ spring:
   data:
     elasticsearch:
       cluster-name: elasticsearch
-      cluster-nodes: 192.168.1.103:9300
+      cluster-nodes: 192.168.198.128:9300
 eureka:
   client:
     service-url:
@@ -20,3 +20,5 @@ eureka:
 ribbon:
   eureka:
     enabled: true
+  ConnectTimeout: 60000 # ribbon链接超时时长
+  ReadTimeout: 60000 # ribbon读取超时时间长

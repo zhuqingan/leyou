@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("goods")
 public class GoodsController {
 
     @Autowired
@@ -44,7 +45,6 @@ public class GoodsController {
      * @param spuBo
      * @return
      */
-    @PostMapping("goods")
     public ResponseEntity<Void> saveGoods(@RequestBody SpuBo spuBo) {
         goodsService.saveGoods(spuBo);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -56,7 +56,6 @@ public class GoodsController {
      * @param spuBo
      * @return
      */
-    @PutMapping("goods")
     public ResponseEntity<Void> updateGoods(@RequestBody SpuBo spuBo) {
         try {
             goodsService.update(spuBo);
@@ -87,7 +86,7 @@ public class GoodsController {
      * @param id
      * @return
      */
-    @GetMapping("sku/list")
+    @GetMapping("/sku/list")
     public ResponseEntity<List<Sku>> querySkuBySpuId(@RequestParam("id") Long id) {
         List<Sku> list = goodsService.querySkuBySpuId(id);
         if (CollectionUtils.isEmpty(list)) {

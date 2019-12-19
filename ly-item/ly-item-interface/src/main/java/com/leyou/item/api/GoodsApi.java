@@ -6,10 +6,12 @@ import com.leyou.item.pojo.Spu;
 import com.leyou.item.pojo.SpuDetail;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+@RequestMapping("goods")
 public interface GoodsApi {
 
     /**
@@ -18,7 +20,7 @@ public interface GoodsApi {
      * @param id
      * @return
      */
-    @GetMapping("/spu/detail/{id}")
+    @GetMapping("spu/detail/{id}")
     SpuDetail querySpuDetailById(@PathVariable("id") Long id);
 
     /**
@@ -38,7 +40,7 @@ public interface GoodsApi {
      * @param key
      * @return
      */
-    @GetMapping("/spu/page")
+    @GetMapping("spu/page")
     PageResult<Spu> querySpuByPage(
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "rows", defaultValue = "5") Integer rows,

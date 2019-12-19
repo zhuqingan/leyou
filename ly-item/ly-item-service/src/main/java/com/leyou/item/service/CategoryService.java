@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,5 +34,22 @@ public class CategoryService {
             throw new LyException(ExceptionEnum.CATEGORY_NOT_FOUND);
         }
         return list;
+    }
+
+    /**
+     * 根据ids查询名字
+     * @param asList
+     * @return
+     */
+    public List<String> queryNameByIds(List<Long> asList) {
+        List<String> names = new ArrayList<>();
+        if (asList != null && asList.size() !=0){
+            for (Long id : asList) {
+                names.add(this.categoryMapper.queryNameById(id));
+            }
+        }
+        return names;
+        //使用通用mapper接口中的SelectByIdListMapper接口查询
+        //return this.categoryMapper.selectByIdList(asList).stream().map(Category::getName).collect(Collectors.toList());
     }
 }
