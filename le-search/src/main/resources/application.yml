@@ -1,12 +1,15 @@
 server:
   port: 8083
 spring:
+  jackson:
+    default-property-inclusion: non_null # 配置json处理时忽略空值
   application:
     name: search-service
   data:
     elasticsearch:
       cluster-name: elasticsearch
-      cluster-nodes: 192.168.198.128:9300
+      #cluster-nodes: 192.168.198.128:9300
+      cluster-nodes: 192.168.1.103:9300
 eureka:
   client:
     service-url:

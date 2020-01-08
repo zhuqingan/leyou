@@ -5,14 +5,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leyou.common.enums.ExceptionEnum;
 import com.leyou.common.exception.LyException;
 import com.leyou.common.utils.JsonUtils;
+import com.leyou.common.vo.PageResult;
 import com.leyou.item.pojo.*;
 import com.leyou.search.client.BrandClient;
 import com.leyou.search.client.CategoryClient;
 import com.leyou.search.client.GoodsClient;
 import com.leyou.search.pojo.Goods;
+import com.leyou.search.pojo.SearchRequest;
+import com.leyou.search.repository.GoodsRepository;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -21,6 +31,9 @@ import java.util.*;
 
 @Service
 public class SearchService {
+
+    @Autowired
+    private GoodsRepository goodsRepository;
 
     @Autowired
     private CategoryClient categoryClient;
@@ -131,5 +144,32 @@ public class SearchService {
             }
         }
         return result;
+    }
+
+    public PageResult<Goods> search(SearchRequest searchRequest) {
+        String key = searchRequest.getKey();
+
+        /**
+         * 判断是否有搜索条件，如果没有，直接返回null。不允许搜索全部商品
+         */
+        if (StringUtils.isBlank(key)){
+            return null;
+        }
+        //构建查询条件
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        //1.对关键字进行全文检索查询
+        queryBuilder.withQuery(QueryBuilders.matchQuery("all",key).operator(Operator.AND));
+        //2.通过sourceFilter设置返回的结果字段，只需要id,skus,subTitle
+        queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id","skus","subTitle"},null));
+        //3.分页
+        int page = searchRequest.getPage() - 1;
+        int size = searchRequest.getDefaultSize();
+        //elasticsearch分页从0开始
+        queryBuilder.withPageable(PageRequest.of(page - 1,size));
+        //4.查询、获取结果
+        Page<Goods> pageInfo = this.goodsRepository.search(queryBuilder.build());
+
+        //5.封装结果，返回
+        return new PageResult<>(pageInfo.getTotalElements(), (long)pageInfo.getTotalPages(),pageInfo.getContent());
     }
 }
