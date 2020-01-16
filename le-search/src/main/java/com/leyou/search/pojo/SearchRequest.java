@@ -21,6 +21,32 @@ public class SearchRequest {
      */
     private static final Integer DEFAULT_PAGE = 1;
 
+    /**
+     * 排序字段
+     */
+    private String sortBy;
+
+    /**
+     *是否降序
+     */
+    private Boolean descending;
+
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
+    }
+
+    public Boolean getDescending() {
+        return descending;
+    }
+
+    public void setDescending(Boolean descending) {
+        this.descending = descending;
+    }
+
     public String getKey() {
         return key;
     }
