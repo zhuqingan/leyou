@@ -25,7 +25,7 @@ public class SearchResult<Goods> extends PageResult<Goods> {
      * 规格参数的过滤条件
      */
     private List<Map<String,Object>> specs;
- 
+
     public List<Category> getCategories() {
         return categories;
     }
@@ -68,5 +68,11 @@ public class SearchResult<Goods> extends PageResult<Goods> {
         this.categories = categories;
         this.brands = brands;
         this.specs = specs;
+    }
+
+    public SearchResult(Long total,Long totalPage, List<Goods> item,List<Category> categories, List<Brand> brands){
+        super(total,totalPage,item);
+        this.categories = categories;
+        this.brands = brands;
     }
 }
