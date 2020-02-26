@@ -212,4 +212,18 @@ public class GoodsService {
         // 新增sku和库存
         saveSkuAndStock(spuBo.getSkus(), spuBo.getId());
     }
+
+    public Spu querySpuById(Long id) {
+        // 查询Spu
+        Spu spu = spuMapper.selectByPrimaryKey(id);
+        if (spu == null) {
+            throw new LyException(ExceptionEnum.GOODS_NOT_FOUND);
+        }
+        //查询sku
+        List<Sku> skus = querySkuBySpuId(id);
+        spu.setSkus(skus);
+        //查询detail
+        spu.setSpuDetail(querySpuDetailById(id));
+        return spu;
+    }
 }

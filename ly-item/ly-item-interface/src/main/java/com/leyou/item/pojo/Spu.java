@@ -30,8 +30,8 @@ public class Spu {
     private String cname;
     @Transient
     private String bname;
-/*    @Transient
-    private List<Spu> skus;
     @Transient
-    private SpuDetail spuDetail;*/
+    private List<Sku> skus;
+    @Transient
+    private SpuDetail spuDetail;
 }
