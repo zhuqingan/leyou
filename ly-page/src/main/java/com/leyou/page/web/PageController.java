@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 public class PageController {
@@ -16,7 +17,7 @@ public class PageController {
     private PageService pageService;
 
     @GetMapping("item/{id}.html")
-    public String toItemPage(@PathVariable("id") Long spuId, Model model){
+    public String toItemPage(@PathVariable("id") Long spuId, Model model) throws ExecutionException, InterruptedException {
         //查询模型数据
         Map<String,Object> attributies = pageService.loadModel(spuId);
         //准备模型数据
