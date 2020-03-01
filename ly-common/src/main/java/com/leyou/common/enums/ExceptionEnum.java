@@ -3,6 +3,7 @@ package com.leyou.common.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.omg.CORBA.INVALID_ACTIVITY;
 
 /**
  * @author zhuqa
@@ -27,7 +28,9 @@ public enum ExceptionEnum {
     UPLOAD_FILE_ERROR(500, "文件上传失败"),
     INVALID_FILE_TYPE(500, "无效的文件类型"),
     GOODS_UPDATE_ERROR(500, "更新商品失败"),
+    INVALID_USER_DATA_TYPE(400,"用户数据类型无效"),
     BRAND_SAVE_ERROR(500, "新增品牌失败");
+
     private int code;
     private String msg;
 }
