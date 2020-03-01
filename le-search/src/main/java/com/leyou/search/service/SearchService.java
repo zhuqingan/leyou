@@ -57,7 +57,7 @@ public class SearchService {
         Goods goods = new Goods();
 
         //1.查询商品分类名称
-        List<String> names = this.categoryClient.queryNameByIds(Arrays.asList(spu.getCid1(),spu.getCid2(),spu.getCid3()));
+        List<String> names = this.categoryClient.queryNameByIds(Arrays.asList(spu.getCid1(), spu.getCid2(), spu.getCid3()));
         // 查询sku
         List<Sku> skus = goodsClient.querySkuBySpuId(spu.getId());
         if (CollectionUtils.isEmpty(skus)) {
@@ -72,22 +72,23 @@ public class SearchService {
         }
         //4.处理sku,仅封装id，价格、标题、图片、并获得价格集合
         List<Long> prices = new ArrayList<>();
-        List<Map<String,Object>> skuLists = new ArrayList<>();
+        List<Map<String, Object>> skuLists = new ArrayList<>();
         skus.forEach(sku -> {
             prices.add(sku.getPrice());
-            Map<String,Object> skuMap = new HashMap<>();
-            skuMap.put("id",sku.getId());
-            skuMap.put("title",sku.getTitle());
-            skuMap.put("price",sku.getPrice());
+            Map<String, Object> skuMap = new HashMap<>();
+            skuMap.put("id", sku.getId());
+            skuMap.put("title", sku.getTitle());
+            skuMap.put("price", sku.getPrice());
             //取第一张图片
-            skuMap.put("image", StringUtils.substringBefore(sku.getImages(),","));
+            skuMap.put("image", StringUtils.substringBefore(sku.getImages(), ","));
         });
 
         //提取公共属性
-        List<Map<String,Object>> genericSpecs = mapper.readValue(spuDetail.getSpecifications(),new TypeReference<List<Map<String,Object>>>(){});
+        List<Map<String, Object>> genericSpecs = mapper.readValue(spuDetail.getSpecifications(), new TypeReference<List<Map<String, Object>>>() {
+        });
 
         //过滤规格模板，把所有可搜索的信息保存到Map中
-        Map<String,Object> specMap = new HashMap<>();
+        Map<String, Object> specMap = new HashMap<>();
 
         String searchable = "searchable";
         String v = "v";
@@ -96,11 +97,11 @@ public class SearchService {
 
         genericSpecs.forEach(m -> {
             List<Map<String, Object>> params = (List<Map<String, Object>>) m.get("params");
-            params.forEach(spe ->{
-                if ((boolean)spe.get(searchable)){
-                    if (spe.get(v) != null){
+            params.forEach(spe -> {
+                if ((boolean) spe.get(searchable)) {
+                    if (spe.get(v) != null) {
                         specMap.put(spe.get(k).toString(), spe.get(v));
-                    }else if (spe.get(options) != null){
+                    } else if (spe.get(options) != null) {
                         specMap.put(spe.get(k).toString(), spe.get(options));
                     }
                 }
@@ -108,7 +109,7 @@ public class SearchService {
         });
 
         // 搜索字段
-        String all = spu.getTitle() + StringUtils.join(names," ") + brand.getName();
+        String all = spu.getTitle() + StringUtils.join(names, " ") + brand.getName();
 
         //构建goods对象
         goods.setId(spu.getId());
@@ -134,16 +135,16 @@ public class SearchService {
             // 获取数值范围
             double begin = NumberUtils.toDouble(segs[0]);
             double end = Double.MAX_VALUE;
-            if(segs.length == 2){
+            if (segs.length == 2) {
                 end = NumberUtils.toDouble(segs[1]);
             }
             // 判断是否在范围内
-            if(val >= begin && val < end){
-                if(segs.length == 1){
+            if (val >= begin && val < end) {
+                if (segs.length == 1) {
                     result = segs[0] + p.getUnit() + "以上";
-                }else if(begin == 0){
+                } else if (begin == 0) {
                     result = segs[1] + p.getUnit() + "以下";
-                }else{
+                } else {
                     result = segment + p.getUnit();
                 }
                 break;
@@ -158,17 +159,17 @@ public class SearchService {
         /**
          * 判断是否有搜索条件，如果没有，直接返回null。不允许搜索全部商品
          */
-        if (StringUtils.isBlank(key)){
+        if (StringUtils.isBlank(key)) {
             return null;
         }
         //构建查询条件
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
         //1.1.对关键字进行全文检索查询
-        queryBuilder.withQuery(QueryBuilders.matchQuery("all",key).operator(Operator.AND));
+        queryBuilder.withQuery(QueryBuilders.matchQuery("all", key).operator(Operator.AND));
         //1.2.通过sourceFilter设置返回的结果字段，只需要id,skus,subTitle
-        queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id","skus","subTitle"},null));
+        queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id", "skus", "subTitle"}, null));
         //1.3.分页和排序
-        searchWithPageAndSort(queryBuilder,searchRequest);
+        searchWithPageAndSort(queryBuilder, searchRequest);
 
         //1.4聚合
         //商品分类聚合名称
@@ -180,7 +181,7 @@ public class SearchService {
         //1.4.2 对品牌进行聚合
         queryBuilder.addAggregation(AggregationBuilders.terms(brandAggName).field("brandId"));
         //2. 查询、获取结果
-        AggregatedPage<Goods> pageInfo = (AggregatedPage<Goods>)this.goodsRepository.search(queryBuilder.build());
+        AggregatedPage<Goods> pageInfo = (AggregatedPage<Goods>) this.goodsRepository.search(queryBuilder.build());
         //3. 解析查询结果
         //3.1 分页信息
         Long total = pageInfo.getTotalElements();
@@ -190,15 +191,16 @@ public class SearchService {
         //3.3 品牌的聚合结果
         List<Brand> brands = getBrandAggResult(pageInfo.getAggregation(brandAggName));
         //3.封装结果，返回
-        return new SearchResult<>(total, (long)totalPage,pageInfo.getContent(),categories,brands);
+        return new SearchResult<>(total, (long) totalPage, pageInfo.getContent(), categories, brands);
     }
 
     /**
      * 构建基本查询条件
+     *
      * @param queryBuilder
      * @param request
      */
-    private void searchWithPageAndSort(NativeSearchQueryBuilder queryBuilder, SearchRequest request){
+    private void searchWithPageAndSort(NativeSearchQueryBuilder queryBuilder, SearchRequest request) {
         // 准备分页参数
         int page = request.getPage();
         int size = request.getDefaultSize();
@@ -208,13 +210,13 @@ public class SearchService {
         // 2、排序
         String sortBy = request.getSortBy();
         Boolean desc = request.getDescending();
-        if (StringUtils.isNotBlank(sortBy)){
+        if (StringUtils.isNotBlank(sortBy)) {
             queryBuilder.withSort(SortBuilders.fieldSort(sortBy).order(desc ? SortOrder.DESC : SortOrder.DESC));
         }
     }
 
-    private List<Category> getCategoryAggResult(Aggregation aggregation){
-        LongTerms brandAgg = (LongTerms)aggregation;
+    private List<Category> getCategoryAggResult(Aggregation aggregation) {
+        LongTerms brandAgg = (LongTerms) aggregation;
         List<Long> cids = new ArrayList<>();
         for (LongTerms.Bucket bucket : brandAgg.getBuckets()) {
             cids.add(bucket.getKeyAsNumber().longValue());
@@ -223,13 +225,32 @@ public class SearchService {
         return this.categoryClient.queryCateGoryByIds(cids);
     }
 
-    private List<Brand> getBrandAggResult(Aggregation aggregation){
-        LongTerms brandAgg = (LongTerms)aggregation;
+    private List<Brand> getBrandAggResult(Aggregation aggregation) {
+        LongTerms brandAgg = (LongTerms) aggregation;
         List<Long> bids = new ArrayList<>();
         for (LongTerms.Bucket bucket : brandAgg.getBuckets()) {
             bids.add(bucket.getKeyAsNumber().longValue());
         }
         // 根据品牌id查询品牌
         return this.brandClient.queryBrandByIds(bids);
+    }
+
+    public void creatOrUpdateIndex(Long spuId) {
+        //查询spu
+        Spu spu = goodsClient.querySpuById(spuId);
+        // 构建goods
+        Goods goods = null;
+        try {
+            goods = buildGoods(spu);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 存入索引库
+        goodsRepository.save(goods);
+
+    }
+
+    public void deleteIndex(Long spuId) {
+        goodsRepository.deleteById(spuId);
     }
 }

@@ -96,9 +96,9 @@ public class GoodsController {
     }
 
     @GetMapping("spu/{id}")
-    public ResponseEntity<Spu> querySpuById(@PathVariable("id") Long id){
+    public ResponseEntity<Spu> querySpuById(@PathVariable("id") Long id) {
         Spu spu = this.goodsService.querySpuById(id);
-        if(spu == null){
+        if (spu == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(spu);

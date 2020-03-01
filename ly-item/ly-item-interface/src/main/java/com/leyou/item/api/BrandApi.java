@@ -15,6 +15,7 @@ public interface BrandApi {
 
     /**
      * 根据品牌id结合，查询品牌信息
+     *
      * @param ids
      * @return
      */

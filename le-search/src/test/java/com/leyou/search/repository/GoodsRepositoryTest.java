@@ -33,13 +33,13 @@ public class GoodsRepositoryTest {
     private SearchService searchService;
 
     @Test
-    public void testCreateIndex(){
+    public void testCreateIndex() {
         template.createIndex(Goods.class);
         template.putMapping(Goods.class);
     }
 
     @Test
-    public void loadData(){
+    public void loadData() {
         List<Spu> list = new ArrayList<>();
         int page = 1;
         int rows = 100;
@@ -49,9 +49,9 @@ public class GoodsRepositoryTest {
             PageResult<Spu> result = goodsClient.querySpuByPage(page, rows, true, null);
             List<Spu> spuList = result.getItems();
             size = spuList.size();
-            page ++;
+            page++;
             list.addAll(spuList);
-        }while (size == 100);
+        } while (size == 100);
 
         //创建Goods集合
         List<Goods> goodsList = new ArrayList<>();

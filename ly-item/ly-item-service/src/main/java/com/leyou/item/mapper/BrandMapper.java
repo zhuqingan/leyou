@@ -9,7 +9,7 @@ import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
-public interface BrandMapper extends Mapper<Brand>, SelectByIdListMapper<Brand,Long> {
+public interface BrandMapper extends Mapper<Brand>, SelectByIdListMapper<Brand, Long> {
     @Insert("insert into tb_category_brand (category_id , brand_id) values (#{cid},#{bid})")
     int insertCategoryBrand(@Param("cid") Long cid, @Param("bid") Long bid);
 

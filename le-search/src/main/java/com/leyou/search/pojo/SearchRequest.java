@@ -27,7 +27,7 @@ public class SearchRequest {
     private String sortBy;
 
     /**
-     *是否降序
+     * 是否降序
      */
     private Boolean descending;
 
@@ -56,13 +56,13 @@ public class SearchRequest {
     }
 
     public Integer getPage() {
-        if (page == null){
+        if (page == null) {
             return DEFAULT_PAGE;
         }
         /**
          * 获取页码时做一些校验，不能小于1
          */
-        return Math.max(DEFAULT_PAGE,page);
+        return Math.max(DEFAULT_PAGE, page);
     }
 
     public void setPage(Integer page) {

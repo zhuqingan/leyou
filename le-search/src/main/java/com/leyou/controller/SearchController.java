@@ -22,15 +22,16 @@ public class SearchController {
 
     /**
      * 搜索功能
+     *
      * @param searchRequest
      * @return
      */
     @PostMapping("page")
-    public ResponseEntity<PageResult<Goods>> search(@RequestBody SearchRequest searchRequest){
+    public ResponseEntity<PageResult<Goods>> search(@RequestBody SearchRequest searchRequest) {
         SearchResult<Goods> result = searchService.search(searchRequest);
-        if (result == null){
+        if (result == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }else {
+        } else {
             return ResponseEntity.ok(result);
         }
     }

@@ -79,6 +79,7 @@ public class BrandService {
 
     /**
      * 根据品牌id查询品牌信息
+     *
      * @param ids
      * @return
      */

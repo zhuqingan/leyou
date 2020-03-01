@@ -99,37 +99,36 @@ public class PageService {
 
         //获取所有规格参数，然后封装成为id和name形式的数据
         String allSpecJson = spuDetail.getSpecifications();
-        List<Map<String,Object>> allSpecs = JsonUtils.nativeRead(allSpecJson, new TypeReference<List<Map<String, Object>>>() {
+        List<Map<String, Object>> allSpecs = JsonUtils.nativeRead(allSpecJson, new TypeReference<List<Map<String, Object>>>() {
         });
-        Map<Integer,String> specName = new HashMap<>();
-        Map<Integer,Object> specValue = new HashMap<>();
-        this.getAllSpecifications(allSpecs,specName,specValue);
+        Map<Integer, String> specName = new HashMap<>();
+        Map<Integer, Object> specValue = new HashMap<>();
+        this.getAllSpecifications(allSpecs, specName, specValue);
 
 
         //获取特有规格参数
         String specTJson = spuDetail.getSpecTemplate();
-        Map<String,String[]> specs = JsonUtils.nativeRead(specTJson, new TypeReference<Map<String, String[]>>() {
+        Map<String, String[]> specs = JsonUtils.nativeRead(specTJson, new TypeReference<Map<String, String[]>>() {
         });
-        Map<Integer,String> specialParamName = new HashMap<>();
-        Map<Integer,String[]> specialParamValue = new HashMap<>();
-        this.getSpecialSpec(specs,specName,specValue,specialParamName,specialParamValue);
+        Map<Integer, String> specialParamName = new HashMap<>();
+        Map<Integer, String[]> specialParamValue = new HashMap<>();
+        this.getSpecialSpec(specs, specName, specValue, specialParamName, specialParamValue);
 
         //按照组构造规格参数
-        List<Map<String,Object>> groups = this.getGroupsSpec(allSpecs,specName,specValue);
+        List<Map<String, Object>> groups = this.getGroupsSpec(allSpecs, specName, specValue);
 
 
-
-        Map<String,Object> map = new HashMap<>();
-        map.put("spu",spu);
-        map.put("spuDetail",spuDetail);
-        map.put("skus",skuList);
-        map.put("brand",brand);
-        map.put("categories",categories);
-        map.put("specName",specName);
-        map.put("specValue",specValue);
-        map.put("groups",groups);
-        map.put("specialParamName",specialParamName);
-        map.put("specialParamValue",specialParamValue);
+        Map<String, Object> map = new HashMap<>();
+        map.put("spu", spu);
+        map.put("spuDetail", spuDetail);
+        map.put("skus", skuList);
+        map.put("brand", brand);
+        map.put("categories", categories);
+        map.put("specName", specName);
+        map.put("specValue", specValue);
+        map.put("groups", groups);
+        map.put("specialParamName", specialParamName);
+        map.put("specialParamValue", specialParamValue);
 
         return map;
     }
@@ -140,10 +139,15 @@ public class PageService {
         context.setVariables(loadModel(spuId));
         //输出流
         File dest = new File("D:\\doc\\day13-html", spuId + ".html");
-        try (PrintWriter writer = new PrintWriter(dest, "UTF-8")){
-            templateEngine.process("item",context,writer);
-        } catch (Exception e){
-            logger.error("[静态页服务] 生成静态页异常",e);
+
+        //如果文件存在，先删除，再生成
+        if (dest.exists()) {
+            dest.delete();
+        }
+        try (PrintWriter writer = new PrintWriter(dest, "UTF-8")) {
+            templateEngine.process("item", context, writer);
+        } catch (Exception e) {
+            logger.error("[静态页服务] 生成静态页异常", e);
         }
 
 
@@ -153,10 +157,10 @@ public class PageService {
         List<Map<String, Object>> groups = new ArrayList<>();
         int i = 0;
         int j = 0;
-        for (Map<String,Object> spec :allSpecs){
+        for (Map<String, Object> spec : allSpecs) {
             List<Map<String, Object>> params = (List<Map<String, Object>>) spec.get("params");
-            List<Map<String,Object>> temp = new ArrayList<>();
-            for (Map<String,Object> param :params) {
+            List<Map<String, Object>> temp = new ArrayList<>();
+            for (Map<String, Object> param : params) {
                 for (Map.Entry<Integer, String> entry : specName.entrySet()) {
                     if (entry.getValue().equals(param.get("k").toString())) {
                         String value = specValue.get(entry.getKey()) != null ? specValue.get(entry.getKey()).toString() : "无";
@@ -168,10 +172,10 @@ public class PageService {
                     }
                 }
             }
-            Map<String,Object> temp2 = new HashMap<>(16);
-            temp2.put("params",temp);
-            temp2.put("id",++i);
-            temp2.put("name",spec.get("group"));
+            Map<String, Object> temp2 = new HashMap<>(16);
+            temp2.put("params", temp);
+            temp2.put("id", ++i);
+            temp2.put("name", spec.get("group"));
             groups.add(temp2);
         }
         return groups;
@@ -181,12 +185,12 @@ public class PageService {
         if (specs != null) {
             for (Map.Entry<String, String[]> entry : specs.entrySet()) {
                 String key = entry.getKey();
-                for (Map.Entry<Integer,String> e : specName.entrySet()) {
-                    if (e.getValue().equals(key)){
-                        specialParamName.put(e.getKey(),e.getValue());
+                for (Map.Entry<Integer, String> e : specName.entrySet()) {
+                    if (e.getValue().equals(key)) {
+                        specialParamName.put(e.getKey(), e.getValue());
                         //因为是放在数组里面，所以要先去除两个方括号，然后再以逗号分割成数组
-                        String  s = specValue.get(e.getKey()).toString();
-                        String result = StringUtils.substring(s,1,s.length()-1);
+                        String s = specValue.get(e.getKey()).toString();
+                        String result = StringUtils.substring(s, 1, s.length() - 1);
                         specialParamValue.put(e.getKey(), result.split(","));
                     }
                 }
@@ -199,39 +203,46 @@ public class PageService {
         String v = "v";
         String unit = "unit";
         String numerical = "numerical";
-        String options ="options";
+        String options = "options";
         int i = 0;
-        if (allSpecs != null){
-            for (Map<String,Object> s : allSpecs){
+        if (allSpecs != null) {
+            for (Map<String, Object> s : allSpecs) {
                 List<Map<String, Object>> params = (List<Map<String, Object>>) s.get("params");
-                for (Map<String,Object> param :params){
+                for (Map<String, Object> param : params) {
                     String result;
-                    if (param.get(v) == null){
+                    if (param.get(v) == null) {
                         result = "无";
-                    }else{
+                    } else {
                         result = param.get(v).toString();
                     }
                     if (param.containsKey(numerical) && (boolean) param.get(numerical)) {
-                        if (result.contains(".")){
+                        if (result.contains(".")) {
                             Double d = Double.valueOf(result);
-                            if (d.intValue() == d){
-                                result = d.intValue()+"";
+                            if (d.intValue() == d) {
+                                result = d.intValue() + "";
                             }
                         }
                         i++;
-                        specName.put(i,param.get(k).toString());
-                        specValue.put(i,result+param.get(unit).toString());
-                    } else if (param.containsKey(options)){
+                        specName.put(i, param.get(k).toString());
+                        specValue.put(i, result + param.get(unit).toString());
+                    } else if (param.containsKey(options)) {
                         i++;
-                        specName.put(i,param.get(k).toString());
-                        specValue.put(i,param.get(options));
-                    }else {
+                        specName.put(i, param.get(k).toString());
+                        specValue.put(i, param.get(options));
+                    } else {
                         i++;
-                        specName.put(i,param.get(k).toString());
-                        specValue.put(i,param.get(v));
+                        specName.put(i, param.get(k).toString());
+                        specValue.put(i, param.get(v));
                     }
                 }
             }
+        }
+    }
+
+    public void deleteHtml(Long spuId) {
+        File dest = new File("D:\\doc\\day13-html", spuId + ".html");
+        if (dest.exists()) {
+            dest.delete();
         }
     }
 }

@@ -56,6 +56,7 @@ public class SpecificationService {
 
     /**
      * 根据category id查询规格参数模板
+     *
      * @param id
      * @return
      */
@@ -69,10 +70,10 @@ public class SpecificationService {
         //查询当前分类下的参数
         List<SpecParam> specParams = queryByParam(null, cid, null, null);
         //先把规格参数变成map，map的key是规格组id，map的值是组下的所有参数
-        Map<Long,List<SpecParam>> map = new HashMap<>();
+        Map<Long, List<SpecParam>> map = new HashMap<>();
         for (SpecParam specParam : specParams) {
-            if (!map.containsKey(specParam.getGroupId())){
-                map.put(specParam.getGroupId(),new ArrayList<>());
+            if (!map.containsKey(specParam.getGroupId())) {
+                map.put(specParam.getGroupId(), new ArrayList<>());
             }
             map.get(specParam.getGroupId()).add(specParam);
         }

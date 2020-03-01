@@ -38,12 +38,13 @@ public class CategoryService {
 
     /**
      * 根据ids查询名字
+     *
      * @param asList
      * @return
      */
     public List<String> queryNameByIds(List<Long> asList) {
         List<String> names = new ArrayList<>();
-        if (asList != null && asList.size() !=0){
+        if (asList != null && asList.size() != 0) {
             for (Long id : asList) {
                 names.add(this.categoryMapper.queryNameById(id));
             }
@@ -55,13 +56,14 @@ public class CategoryService {
 
     /**
      * 根据cid3查询其所有层级分类
+     *
      * @param id
      * @return
      */
     public List<Category> queryAllCategoryLevelByCid3(Long id) {
         List<Category> categoryList = new ArrayList<>();
         Category category = this.categoryMapper.selectByPrimaryKey(id);
-        while (category.getParentId() != 0){
+        while (category.getParentId() != 0) {
             categoryList.add(category);
             category = this.categoryMapper.selectByPrimaryKey(category.getParentId());
         }

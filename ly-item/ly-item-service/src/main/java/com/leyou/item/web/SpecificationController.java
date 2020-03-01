@@ -52,11 +52,12 @@ public class SpecificationController {
 
     /**
      * 查询商品分类对应的规格参数模板
+     *
      * @param id
      * @return
      */
     @GetMapping("{id}")
-    public ResponseEntity<String> querySpecificationByCategoryId(@PathVariable("id") Long id){
+    public ResponseEntity<String> querySpecificationByCategoryId(@PathVariable("id") Long id) {
         Specification spec = this.specService.queryById(id);
         if (spec == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -68,9 +69,9 @@ public class SpecificationController {
      * 根据分类查询规格组及组内参数
      */
     @GetMapping("group")
-    public ResponseEntity<List<SpecGroup>> queryListByCid(@RequestParam("cid") Long cid){
+    public ResponseEntity<List<SpecGroup>> queryListByCid(@RequestParam("cid") Long cid) {
         List<SpecGroup> list = specService.queryListByCid(cid);
-        if(list == null || list.size() == 0){
+        if (list == null || list.size() == 0) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(list);

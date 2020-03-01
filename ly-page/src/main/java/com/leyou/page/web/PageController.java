@@ -19,7 +19,7 @@ public class PageController {
     @GetMapping("item/{id}.html")
     public String toItemPage(@PathVariable("id") Long spuId, Model model) throws ExecutionException, InterruptedException {
         //查询模型数据
-        Map<String,Object> attributies = pageService.loadModel(spuId);
+        Map<String, Object> attributies = pageService.loadModel(spuId);
         //准备模型数据
         model.addAllAttributes(attributies);
         //返回视图

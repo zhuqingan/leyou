@@ -9,6 +9,7 @@ public interface CategoryMapper extends Mapper<Category>, IdListMapper<Category,
 
     /**
      * 根据id查名字
+     *
      * @param id
      * @return
      */
