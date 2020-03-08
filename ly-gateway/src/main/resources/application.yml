@@ -13,10 +13,13 @@ zuul:
     item-service: /item/**
     search-service: /search/**
     user-service: /user/**
+    auth-service: /auth/**
     upload-service:
       path: /upload/**
       serviceId: upload-service
       strip-prefix: false
+  add-host-header: true
+  sensitive-headers: #设置敏感头信息为空
 hystrix:
   command:
     default:
@@ -29,3 +32,16 @@ ribbon:
   ReadTimeout: 3500 #ribbon读取超时时长
   MaxAutoRetries: 0 #当前服务重试次数
   MaxAutoRetriesNextServer: 0 #切换服务重试次数
+leyou:
+  jwt:
+    pubKeyPath: D:\\doc\\rsa\\rsa.pub # 公钥地址
+    cookieName: LY_TOKEN
+  filter:
+    allowPaths:
+      - /api/auth
+      - /api/search
+      - /api/user/register
+      - /api/user/check
+      - /api/user/code
+      - /api/item
+
